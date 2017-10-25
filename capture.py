@@ -32,7 +32,7 @@ class Config():
 
         self.config = {}
 
-    def load(self, filename="./config.yaml"):
+    def load(self, filename="./peppercarrot.yaml"):
         fb = open(filename, 'rb')
         self.config = yaml.load(fb)
         self.camera_resolution = (
@@ -49,6 +49,12 @@ class Config():
             self.config['photo_directory'])
         self.fullscreen = (
             self.config['fullscreen'])
+        self.max_alpha = (
+            self.config['max_alpha'])
+        self.alpha_step = (
+            self.config['alpha_step'])
+        self.datetime_format = (
+            self.config['datetime_format'])
         self.theme_directory = (
             self.config['theme']['directory'])
         self.theme_overlay = (
@@ -114,7 +120,7 @@ class Status(pygame.sprite.Sprite):
         self.font = pygame.font.Font((config.theme_font), 40)
 
     def update(self):
-        text = datetime.now().strftime("%s")
+        text = datetime.now().strftime(config.datetime_format)
         base = self.font.render(str(text), 1, (0, 0, 0))
         self.image = base
         top = self.font.render(str(text), 1, (0x66, 0x88, 0xbb))
@@ -180,7 +186,7 @@ class ConsoleOverlay(pygame.sprite.Sprite):
 
         self.hideme = False
         self.current_alpha_channel = 0
-        self.max_alpha_channel = 60
+        self.max_alpha_channel = config.max_alpha
         self.dest_alpha_channel = self.max_alpha_channel
         self.counter = 0
         console_image = \
@@ -194,10 +200,10 @@ class ConsoleOverlay(pygame.sprite.Sprite):
     def update(self):
         if self.hideme is False and \
                 self.current_alpha_channel <= self.dest_alpha_channel:
-            self.current_alpha_channel += 1
+            self.current_alpha_channel += config.alpha_step
         if self.hideme is True and \
                 self.current_alpha_channel > self.dest_alpha_channel:
-            self.current_alpha_channel -= 1
+            self.current_alpha_channel -= config.alpha_step
         self.image.set_alpha(self.current_alpha_channel)
 
     def hide(self):
